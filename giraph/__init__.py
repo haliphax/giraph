@@ -1,4 +1,4 @@
-"""giraph: grapheme helper package"""
+"""Grapheme helper package for Python"""
 
 # local
 from .buffer import GraphemeBuffer  # noqa: F401
