@@ -184,6 +184,9 @@ class GraphemeBuffer(list[Grapheme | None]):
             A `GraphemeBuffer` instance representing the grapheme(s) from the input.
         """
 
-        from .from_str import grapheme_buffer_from_str
+        # avoid circular import
+        from ._from_str import _from_str
 
-        return grapheme_buffer_from_str(input)
+        output = _from_str(input, False)
+        assert isinstance(output, GraphemeBuffer)
+        return output

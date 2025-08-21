@@ -191,36 +191,3 @@ def _from_str(input: str, stop_at_first: bool) -> GraphemeBuffer | Grapheme:
         cells.append(cell)
 
     return cells
-
-
-def grapheme_from_str(input: str) -> Grapheme:
-    """
-    Construct a single `Grapheme` from the given `str`.
-
-    Args:
-        input: The input to parse.
-
-    Returns:
-        A `Grapheme` instance representing the first grapheme from the
-        input.
-    """
-
-    output = _from_str(input, True)
-    assert isinstance(output, Grapheme)
-    return output
-
-
-def grapheme_buffer_from_str(input: str) -> GraphemeBuffer:
-    """
-    Construct a `GraphemeBuffer` from the given `str`.
-
-    Args:
-        input: The input to parse.
-
-    Returns:
-        A `GraphemeBuffer` instance representing the grapheme(s) from the input.
-    """
-
-    output = _from_str(input, False)
-    assert isinstance(output, GraphemeBuffer)
-    return output

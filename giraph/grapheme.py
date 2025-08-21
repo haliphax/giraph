@@ -80,6 +80,9 @@ class Grapheme:
             input.
         """
 
-        from .from_str import grapheme_from_str
+        # avoid circular import
+        from ._from_str import _from_str
 
-        return grapheme_from_str(input)
+        output = _from_str(input, True)
+        assert isinstance(output, Grapheme)
+        return output
