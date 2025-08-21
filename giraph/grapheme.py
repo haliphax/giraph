@@ -1,10 +1,13 @@
-"""Grapheme class"""
+"""`Grapheme` class module"""
 
 # stdlib
 from __future__ import annotations
 
 # 3rd party
 from wcwidth import wcswidth  # type: ignore
+
+# local
+from .from_str import grapheme_from_str
 
 
 class Grapheme:
@@ -19,43 +22,55 @@ class Grapheme:
     """
 
     char: str
+    """Base character"""
+
     mods: list[str]
+    """Modifiers"""
+
     width: int
-    force_width: bool
+    """Character width"""
+
+    force_wide: bool
+    """Force 'wide' representation"""
 
     def __init__(
         self,
         char: str = "",
         mods: list[str] | None = None,
         width: int = 1,
-        force_width: bool = False,
+        force_wide: bool = False,
     ):
         self.char = char
         self.mods = mods if mods else []
         self.width = width
-        self.force_width = force_width
+        self.force_wide = force_wide
 
-    def _modstr(self, s):
+    def _modstr(self, s) -> str:
         return "0x%04X" % ord(s) if wcswidth(s) <= 0 else s
 
-    def __eq__(self, __object: object):
+    def __eq__(self, __object: object) -> bool:
         if not isinstance(__object, Grapheme):
             return NotImplemented
 
         return str(self) == str(__object)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"Grapheme(char={self.char!r}, "
             f"mods={[self._modstr(c) for c in self.mods]}, "
-            f"width={self.width}{' <forced>' if self.force_width else ''})"
+            f"width={self.width}{' <forced>' if self.force_wide else ''})"
         )
 
-    def __str__(self):
-        return "".join((self.raw, " " if self.force_width else ""))
+    def __str__(self) -> str:
+        return "".join((self.raw, " " if self.force_wide else ""))
 
     @property
-    def raw(self):
+    def raw(self) -> str:
         """The raw output of this grapheme, without forced-width adjustment."""
 
         return "".join((self.char, "".join(self.mods)))
+
+    def from_str(self, input: str) -> Grapheme:
+        return grapheme_from_str(input)
+
+    from_str.__doc__ = grapheme_from_str.__doc__
