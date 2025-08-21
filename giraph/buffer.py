@@ -5,8 +5,7 @@ from __future__ import annotations
 from typing_extensions import SupportsIndex
 
 # local
-from . import logger
-from .from_str import grapheme_buffer_from_str
+from .logging import logger
 from .grapheme import Grapheme
 
 
@@ -46,12 +45,12 @@ class GraphemeBuffer(list[Grapheme | None]):
         return "".join(str(g) if g else "" for g in self)
 
     def append(self, __object: Grapheme | None) -> None:
-        val = super().append(__object)
+        val = super(GraphemeBuffer, self).append(__object)
 
         # pad wide graphemes
         if __object and __object.width > 1:
             for _ in range(__object.width - 1):
-                super().append(None)
+                super(GraphemeBuffer, self).append(None)
 
         return val
 
@@ -61,20 +60,20 @@ class GraphemeBuffer(list[Grapheme | None]):
 
         if __object and __object.width > 1:
             for _ in range(__object.width - 1):
-                super().insert(__index, None)
+                super(GraphemeBuffer, self).insert(__index, None)
 
-        return super().insert(__index, __object)
+        return super(GraphemeBuffer, self).insert(__index, __object)
 
     def pop(self, __index: SupportsIndex = -1) -> Grapheme | None:
         if not isinstance(__index, int):
             return NotImplemented
 
-        val = super().pop(__index)
+        val = super(GraphemeBuffer, self).pop(__index)
         idx = int(__index)
 
         if val and val.width > 1 and idx >= 0:
             for _ in range(val.width - 1):
-                super().pop(__index)
+                super(GraphemeBuffer, self).pop(__index)
 
         iterate = idx > 0
 
@@ -82,7 +81,7 @@ class GraphemeBuffer(list[Grapheme | None]):
             if iterate:
                 idx -= 1
 
-            val = super().pop(idx)
+            val = super(GraphemeBuffer, self).pop(idx)
 
         return val
 
@@ -174,7 +173,17 @@ class GraphemeBuffer(list[Grapheme | None]):
         return result
 
     @classmethod
-    def from_str(cls, string: str) -> GraphemeBuffer:
-        return grapheme_buffer_from_str(string)
+    def from_str(cls, input: str) -> GraphemeBuffer:
+        """
+        Construct a `GraphemeBuffer` from the given `str`.
 
-    from_str.__doc__ = grapheme_buffer_from_str.__doc__
+        Args:
+            input: The input to parse.
+
+        Returns:
+            A `GraphemeBuffer` instance representing the grapheme(s) from the input.
+        """
+
+        from .from_str import grapheme_buffer_from_str
+
+        return grapheme_buffer_from_str(input)

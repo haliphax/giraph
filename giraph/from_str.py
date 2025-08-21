@@ -1,8 +1,6 @@
 """`str` to `Grapheme` and `GraphemeBuffer` conversion"""
 
 # stdlib
-from __future__ import annotations
-from typing import TYPE_CHECKING
 import unicodedata
 
 # 3rd party
@@ -10,7 +8,6 @@ from emoji import is_emoji
 from wcwidth import wcswidth  # type: ignore
 
 # local
-from . import logger
 from .constants import (
     ASSUME_WIDE,
     EMOJI_VS,
@@ -21,15 +18,18 @@ from .constants import (
     ZWJ,
     ZWNJ,
 )
-
-if TYPE_CHECKING:
-    from .buffer import GraphemeBuffer
-    from .grapheme import Grapheme
+from .buffer import GraphemeBuffer
+from .grapheme import Grapheme
+from .logging import logger
 
 
 def _from_str(input: str, stop_at_first: bool) -> GraphemeBuffer | Grapheme:
-    def _append_cell(cell: Grapheme, cells: GraphemeBuffer):
+    def _append_cell():
         if cell:
+            if stop_at_first:
+                logger.debug("stopping at first grapheme")
+                return cell
+
             logger.debug(f"appending {cell!r}")
             cells.append(cell)
 
@@ -121,7 +121,7 @@ def _from_str(input: str, stop_at_first: bool) -> GraphemeBuffer | Grapheme:
                     cell.mods.pop()
 
                 cell.mods.append(ZWNJ)
-                cell = _append_cell(cell, cells)
+                cell = _append_cell()
             else:
                 was_emoji = True
                 continue
@@ -133,7 +133,7 @@ def _from_str(input: str, stop_at_first: bool) -> GraphemeBuffer | Grapheme:
             continue
 
         if cell.char != "":
-            cell = _append_cell(cell, cells)
+            cell = _append_cell()
 
         if unicodedata.east_asian_width(c) == "W":
             logger.debug("wide")
@@ -182,11 +182,13 @@ def _from_str(input: str, stop_at_first: bool) -> GraphemeBuffer | Grapheme:
             logger.debug(f"ZWC: {hexstr}")
 
         cell.char = c
+        cell = _append_cell()
 
-        if stop_at_first:
-            return cell
+    if stop_at_first:
+        return cell
 
-        cell = _append_cell(cell, cells)
+    if not len(cells) and cell:
+        cells.append(cell)
 
     return cells
 

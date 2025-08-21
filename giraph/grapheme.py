@@ -6,9 +6,6 @@ from __future__ import annotations
 # 3rd party
 from wcwidth import wcswidth  # type: ignore
 
-# local
-from .from_str import grapheme_from_str
-
 
 class Grapheme:
     """
@@ -70,7 +67,19 @@ class Grapheme:
 
         return "".join((self.char, "".join(self.mods)))
 
+    @classmethod
     def from_str(self, input: str) -> Grapheme:
-        return grapheme_from_str(input)
+        """
+        Construct a single `Grapheme` from the given `str`.
 
-    from_str.__doc__ = grapheme_from_str.__doc__
+        Args:
+            input: The input to parse.
+
+        Returns:
+            A `Grapheme` instance representing the first grapheme from the
+            input.
+        """
+
+        from .from_str import grapheme_from_str
+
+        return grapheme_from_str(input)
