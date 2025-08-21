@@ -6,5 +6,6 @@ __pycache__/
 /.python-version
 /*.egg-info/
 /build/
+/html/
 coverage.xml
 node_modules/
