@@ -32,52 +32,29 @@ class GraphemeBuffer(list[Grapheme | None]):
     previous `Grapheme` has a `width` value greater than 1).
     """
 
-    def __add__(self, other: GraphemeBuffer | str | None):  # type: ignore
-        updated = GraphemeBuffer(self.copy())
-
-        if other is None:
-            return updated
-
-        add = (
-            GraphemeBuffer.from_str(other) if isinstance(other, str) else other
+    def __add__(self, __object: str):  # type: ignore
+        return GraphemeBuffer(
+            super(GraphemeBuffer, self).__add__(
+                GraphemeBuffer.from_str(__object)
+            )
         )
 
-        # append to copy, but skip padding (handled by append method)
-        for grapheme in [a for a in add if a]:
-            updated.append(grapheme)
-
-        return updated
-
-    def __iadd__(self, other: GraphemeBuffer | str | None):  # type: ignore
-        if other is None:
-            return
-
-        add = (
-            GraphemeBuffer.from_str(other) if isinstance(other, str) else other
+    def __iadd__(self, __object: str):  # type: ignore
+        return super(GraphemeBuffer, self).__iadd__(
+            GraphemeBuffer.from_str(__object)
         )
-
-        # append to self, but skip padding (handled by append method)
-        for grapheme in [a for a in add if a]:
-            self.append(grapheme)
-
-        return self
 
     def __repr__(self):
         return f"GraphemeBuffer({len(self)})"
 
     def __setitem__(  # type: ignore
         self,
-        key: int,
-        value: Grapheme | str | None,
+        __index: SupportsIndex,
+        __object: str,
     ):
-        graph = (
-            GraphemeBuffer.from_str(value)[0]
-            if isinstance(value, str)
-            else value
+        return super(GraphemeBuffer, self).__setitem__(
+            __index, GraphemeBuffer.from_str(__object)[0]
         )
-
-        self.pop(key)
-        self.insert(key, graph)
 
     def __str__(self):
         return "".join(str(g) if g else "" for g in self)
@@ -93,6 +70,9 @@ class GraphemeBuffer(list[Grapheme | None]):
         return val
 
     def insert(self, __index: SupportsIndex, __object: Grapheme | None) -> None:
+        if not isinstance(__index, int):
+            return NotImplemented
+
         if __object and __object.width > 1:
             for _ in range(__object.width - 1):
                 super().insert(__index, None)
@@ -100,6 +80,9 @@ class GraphemeBuffer(list[Grapheme | None]):
         return super().insert(__index, __object)
 
     def pop(self, __index: SupportsIndex = -1) -> Grapheme | None:
+        if not isinstance(__index, int):
+            return NotImplemented
+
         val = super().pop(__index)
         idx = int(__index)
 
@@ -107,7 +90,6 @@ class GraphemeBuffer(list[Grapheme | None]):
             for _ in range(val.width - 1):
                 super().pop(__index)
 
-        idx = int(__index)
         iterate = idx > 0
 
         while not val and idx != 0:

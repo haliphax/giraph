@@ -38,11 +38,11 @@ class Grapheme:
     def _modstr(self, s):
         return "0x%04X" % ord(s) if wcswidth(s) <= 0 else s
 
-    def __eq__(self, other: object):
-        if not isinstance(other, Grapheme):
+    def __eq__(self, __object: object):
+        if not isinstance(__object, Grapheme):
             return NotImplemented
 
-        return str(self) == str(other)
+        return str(self) == str(__object)
 
     def __repr__(self):
         return (
