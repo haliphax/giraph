@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+/.coverage
+/.mypy_cache/
+/.pytest_cache/
+/.python-version
+/*.egg-info/
+/build/
+coverage.xml
+node_modules/

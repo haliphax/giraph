@@ -1,0 +1,36 @@
+{
+	"devDependencies": {
+		"@commitlint/config-conventional": "^19.8.1",
+		"@semantic-release/changelog": "^6.0.3",
+		"@semantic-release/git": "^10.0.1",
+		"@semantic-release/github": "^10.0.2",
+		"commitlint": "^19.8.1",
+		"gitmoji-cli": "^9.7.0",
+		"husky": "^9.1.7",
+		"nano-staged": "^0.8.0",
+		"prettier": "^3.2.5",
+		"prettier-plugin-toml": "^2.0.1",
+		"semantic-release": "^22.0.5",
+		"semantic-release-gitmoji": "^1.6.5",
+		"semantic-release-replace-plugin": "^1.2.7"
+	},
+	"engines": {
+		"node": "^22"
+	},
+	"nano-staged": {
+		"*": [
+			"prettier -luw"
+		],
+		"*.py": [
+			"ruff format",
+			"ruff check --fix"
+		]
+	},
+	"overrides": {
+		"npm": "^10.9.3",
+		"tmp": "^0.2.4"
+	},
+	"scripts": {
+		"prepare": "husky || true"
+	}
+}
