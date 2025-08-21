@@ -1,0 +1,94 @@
+name: Checks
+
+on:
+  pull_request:
+    branches: [main]
+
+  push:
+    branches: [main]
+
+  workflow_dispatch:
+
+concurrency:
+  cancel-in-progress: true
+  group: |
+    ${{ github.workflow }}-${{ github.event.pull_request.id || github.branch }}
+
+jobs:
+  eslint:
+    name: ESLint (linter)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: ESLint
+        run: npx eslint .
+
+  prettier:
+    name: Prettier (formatter)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prettier
+        run: npx prettier -lu .
+
+  ruff-format:
+    name: Ruff (formatter)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Install dependencies
+        run: |
+          python -m pip install -U pip setuptools
+          pip install .[dev]
+
+      - name: Ruff
+        run: ruff format --diff .
+
+  ruff-lint:
+    name: Ruff (linter)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Install dependencies
+        run: |
+          python -m pip install -U pip setuptools
+          pip install .[dev]
+
+      - name: Ruff
+        run: ruff check --diff .
