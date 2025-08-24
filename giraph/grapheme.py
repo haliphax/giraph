@@ -2,6 +2,7 @@
 
 # stdlib
 from __future__ import annotations
+import unicodedata
 
 # 3rd party
 from wcwidth import wcswidth  # type: ignore
@@ -53,8 +54,8 @@ class Grapheme:
 
     def __repr__(self) -> str:
         return (
-            f"Grapheme(char={self.char!r}, "
-            f"mods={[self._modstr(c) for c in self.mods]}, "
+            f"Grapheme(char={unicodedata.name(self.char)}, "
+            f"mods=[{', '.join([unicodedata.name(c) for c in self.mods])}], "
             f"width={self.width}{' <forced>' if self.force_wide else ''})"
         )
 

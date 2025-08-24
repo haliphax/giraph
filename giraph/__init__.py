@@ -1,7 +1,8 @@
 """Grapheme helper package for Python"""
 
 # local
-from .buffer import GraphemeBuffer  # noqa: F401
-from .grapheme import Grapheme  # noqa: F401
+from .buffer import GraphemeBuffer
+from .grapheme import Grapheme
+from .logging import logger
 
-__all__ = ("Grapheme", "GraphemeBuffer")
+__all__ = ("Grapheme", "GraphemeBuffer", "logger")
