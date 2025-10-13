@@ -53,9 +53,24 @@ class Grapheme:
         return str(self) == str(__object)
 
     def __repr__(self) -> str:
+        try:
+            name = unicodedata.name(self.char)
+        except ValueError:
+            name = self._modstr(self.char)
+
+        mods = []
+
+        for m in self.mods:
+            try:
+                mod = unicodedata.name(m)
+            except ValueError:
+                mod = self._modstr(m)
+
+            mods.append(mod)
+
         return (
-            f"Grapheme(char={unicodedata.name(self.char)}, "
-            f"mods=[{', '.join([unicodedata.name(c) for c in self.mods])}], "
+            f"Grapheme(char={name}, "
+            f"mods=[{', '.join(mods)}], "
             f"width={self.width}{' <forced>' if self.force_wide else ''})"
         )
 

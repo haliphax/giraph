@@ -118,7 +118,7 @@ def _from_str(input: str, stop_at_first: bool) -> GraphemeBuffer | Grapheme:
                 logger.debug(f"invalid base: {cell!r}")
 
                 if cell.mods:
-                    cell.mods.pop()
+                    cell.mods.clear()
 
                 cell.mods.append(ZWNJ)
                 cell = _append_cell()
